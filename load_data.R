@@ -167,6 +167,64 @@ p <- p + geom_segment(data=removed.flights, aes(x = lon.o, y = lat.o, xend = lon
 p <- p + geom_segment(data=added.flights, aes(x = lon.o, y = lat.o, xend = lon.d, yend = lat.d), alpha = 1, color = "green")
 p
 
+###################Yellowstone standby################
+
+
+hazard.network = read.table("june_1.txt")
+hazard.optim.network = read.table("hazard_standby.txt")
+
+temp = convert_code(hazard.network[,1], df3)
+temp_2 = convert_code(hazard.network[,2], df3)
+temp_3 = convert_code(hazard.optim.network[,1], df3)
+temp_4 = convert_code(hazard.optim.network[,2], df3)
+
+hazard.flights = data.frame(lon.o = temp[,1], lat.o = temp[,2], lon.d = temp_2[,1], lat.d = temp_2[,2])
+indx <- sapply(hazard.flights, is.factor)
+hazard.flights[indx] <- lapply(hazard.flights[indx], function(x) as.numeric(as.character(x)))
+
+hazard.optim.flights = data.frame(lon.o = temp_3[,1], lat.o = temp_3[,2], lon.d = temp_4[,1], lat.d = temp_4[,2])
+indx <- sapply(hazard.optim.flights, is.factor)
+hazard.optim.flights[indx] <- lapply(hazard.optim.flights[indx], function(x) as.numeric(as.character(x)))
+
+rows.in.a1.that.are.not.in.a2  <- function(a1,a2)
+{
+  a1.vec <- apply(a1, 1, paste, collapse = "")
+  a2.vec <- apply(a2, 1, paste, collapse = "")
+  a1.without.a2.rows <- a1[!a1.vec %in% a2.vec,]
+  return(a1.without.a2.rows)
+}
+IN_ORIGINAL = rows.in.a1.that.are.not.in.a2(hazard.flights, hazard.optim.flights)
+IN_OPTIM = rows.in.a1.that.are.not.in.a2(hazard.optim.flights, hazard.flights)
+
+removed.flights = hazard.flights[rownames(IN_ORIGINAL),]
+added.flights = hazard.optim.flights[rownames(IN_OPTIM),]
+
+airports_removed = c(11292, 14869, 10849, 11109, 13486, 11884, 10713, 10620, 12441,
+                     14252, 11921, 12156, 11097, 14457, 12280, 15041, 11648, 12003,
+                     12389, 12888, 11865, 14543, 10372, 13127, 14113, 11122, 10779,
+                     10918, 11525, 15389, 15897)
+
+temp = convert_code(airports_removed, df3)
+hazard.lat.lon = data.frame(lon = temp[,1], lat = temp[,2])
+indx <- sapply(hazard.lat.lon, is.factor)
+hazard.lat.lon[indx] <- lapply(hazard.lat.lon[indx], function(x) as.numeric(as.character(x)))
+
+p <- ggmap(get_map(location=us,maptype = "toner-background", zoom=4,source="stamen"))
+p <- p + geom_point(data=lat.lon, aes(lon, lat), alpha = 0.3, color="blue", size = 1)
+p <- p + geom_point(data=hazard.lat.lon, aes(lon, lat), alpha = 1, color="red", size = 1)
+p <- p + geom_segment(data=hazard.flights, aes(x = lon.o, y = lat.o, xend = lon.d, yend = lat.d), alpha = 0.15, color = "darkred")
+p
+
+
+p <- ggmap(get_map(location=us,maptype = "toner-background", zoom=4,source="stamen"))
+p <- p + geom_point(data=lat.lon, aes(lon, lat), alpha = 0.3, color="blue", size = 1)
+p <- p + geom_segment(data=removed.flights, aes(x = lon.o, y = lat.o, xend = lon.d, yend = lat.d), alpha = 1, color = "darkred")
+p <- p + geom_segment(data=added.flights, aes(x = lon.o, y = lat.o, xend = lon.d, yend = lat.d), alpha = 1, color = "green")
+p
+
+
+
+
 #### Targeted Attack ####
 targeted.network = read.table("targeted_original.txt")
 temp = convert_code(targeted.network[,1], df3)
@@ -187,7 +245,7 @@ targeted.optim.network = read.table("targeted.txt")
 temp_3 = convert_code(targeted.optim.network[,1], df3)
 temp_4 = convert_code(targeted.optim.network[,2], df3)
 
-targeted.flights = data.frame(lon.o = temp[,1], lat.o = temp[,2], temp_2 = temp_2[,1], temp_2 = temp_2[,2])
+targeted.flights = data.frame(lon.o = temp[,1], lat.o = temp[,2], lon.d = temp_2[,1], lat.d = temp_2[,2])
 indx <- sapply(targeted.flights, is.factor)
 targeted.flights[indx] <- lapply(targeted.flights[indx], function(x) as.numeric(as.character(x)))
 
@@ -213,4 +271,53 @@ p <- ggmap(get_map(location=us,maptype = "toner-background", zoom=4,source="stam
 p <- p + geom_point(data=lat.lon, aes(lon, lat), alpha = 0.3, color="blue", size = 1)
 p <- p + geom_segment(data=removed.flights, aes(x = lon.o, y = lat.o, xend = lon.d, yend = lat.d), alpha = 1, color = "darkred")
 p <- p + geom_segment(data=added.flights, aes(x = lon.o, y = lat.o, xend = lon.d, yend = lat.d), alpha = 1, color = "green")
+p
+
+
+#### Targeted Attack ####
+targeted.network = read.table("june_1.txt")
+temp = convert_code(targeted.network[,1], df3)
+temp_2 = convert_code(targeted.network[,2], df3)
+
+targeted.flights = data.frame(lon.o = temp[,1], lat.o = temp[,2], lon.d = temp_2[,1], lat.d = temp_2[,2])
+indx <- sapply(targeted.flights, is.factor)
+targeted.flights[indx] <- lapply(targeted.flights[indx], function(x) as.numeric(as.character(x)))
+
+p <- ggmap(get_map(location=us,maptype = "toner-background", zoom=4,source="stamen"))
+p <- p + geom_point(data=lat.lon, aes(lon, lat), alpha = 0.3, color="blue", size = 1)
+p <- p + geom_segment(data=targeted.flights, aes(x = lon.o, y = lat.o, xend = lon.d, yend = lat.d), alpha = 0.2, color = "darkred")
+p
+
+
+targeted.optim.network = read.table("targeted_PLANES_STANDBY.txt")
+
+temp_3 = convert_code(targeted.optim.network[,1], df3)
+temp_4 = convert_code(targeted.optim.network[,2], df3)
+
+targeted.flights = data.frame(lon.o = temp[,1], lat.o = temp[,2], lon.d = temp_2[,1], lat.d = temp_2[,2])
+indx <- sapply(targeted.flights, is.factor)
+targeted.flights[indx] <- lapply(targeted.flights[indx], function(x) as.numeric(as.character(x)))
+
+targeted.optim.flights = data.frame(lon.o = temp_3[,1], lat.o = temp_3[,2], lon.d = temp_4[,1], lat.d = temp_4[,2])
+indx <- sapply(targeted.optim.flights, is.factor)
+targeted.optim.flights[indx] <- lapply(targeted.optim.flights[indx], function(x) as.numeric(as.character(x)))
+
+rows.in.a1.that.are.not.in.a2  <- function(a1,a2)
+{
+  a1.vec <- apply(a1, 1, paste, collapse = "")
+  a2.vec <- apply(a2, 1, paste, collapse = "")
+  a1.without.a2.rows <- a1[!a1.vec %in% a2.vec,]
+  return(a1.without.a2.rows)
+}
+IN_ORIGINAL = rows.in.a1.that.are.not.in.a2(targeted.flights, targeted.optim.flights)
+IN_OPTIM = rows.in.a1.that.are.not.in.a2(targeted.optim.flights, targeted.flights)
+
+removed.flights = targeted.flights[rownames(IN_ORIGINAL),]
+added.flights = targeted.optim.flights[rownames(IN_OPTIM),]
+
+
+p <- ggmap(get_map(location=us,maptype = "toner-background", zoom=4,source="stamen"))
+p <- p + geom_point(data=lat.lon, aes(lon, lat), alpha = 0.3, color="blue", size = 1)
+p <- p + geom_segment(data=removed.flights, aes(x = lon.o, y = lat.o, xend = lon.d, yend = lat.d), alpha = 0.3, color = "darkred")
+p <- p + geom_segment(data=added.flights, aes(x = lon.o, y = lat.o, xend = lon.d, yend = lat.d), alpha = 0.3, color = "green")
 p

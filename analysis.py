@@ -524,7 +524,7 @@ for i in range(len(ind[0])):
     if ind[0][i] != ind[1][i]:
         targeted_mapping.append((targeted_id[ind[0][i]], targeted_id[ind[1][i]]))
 
-#graph = simulation(N, E, targetedGraph, targeted_mapping, lookup)
+#graph = simulation(N, 1884, targetedGraph, targeted_mapping, lookup)
 #snap.SaveEdgeList(graph, 'targeted.txt')
 targeted = snap.LoadEdgeList(snap.PUNGraph, "targeted.txt", 0, 1, '\t')
 print shortest_flight_dist(targeted, lookup, True)
@@ -553,7 +553,7 @@ page_rank = sorted(page_rank, key=lambda x: x[1])
 #Atlanta, Chicago O'Hare, Denver, Minneapolis-Saint Paul, Detroit, same cities
 top_5_page_rank = list(reversed(page_rank[-5:]))
 
-#10397, 13930, 11433, 13487, 12266
-#ATL, ORD, DTW, MSP, IAH
+#14869, 12266, 11298, 14107, 11618
+#SLC, IAH, DFW, PHX, EWR
 if PRINT:
     print "PageRank of top 5, hazard: ", top_5_page_rank
